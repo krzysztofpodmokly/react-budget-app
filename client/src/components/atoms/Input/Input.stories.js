@@ -7,5 +7,4 @@ storiesOf('Atoms/Input', module)
   .add('Item', () => <Input placeholder="Item" theme={theme} />)
   .add('Cash', () => <Input placeholder="Price" theme={theme} />)
   .add('Category', () => <Input placeholder="Category" theme={theme} />)
-  .add('Date', () => <Input placeholder="Date" theme={theme} />)
-  .add('Type', () => <Input placeholder="Type" theme={theme} />);
+  .add('Date', () => <Input type="date" placeholder="Date" theme={theme} />);
