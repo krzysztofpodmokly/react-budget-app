@@ -4,7 +4,7 @@ const Input = styled.input`
   padding: 1.5rem 2rem;
   font-size: ${({ theme }) => theme.fontSize.s};
   font-weight: ${({ theme }) => theme.light};
-  background-color: ${({ theme }) => theme.lightGrey};
+  background-color: ${({ theme }) => theme.lightGrey1};
   border: 1px solid ${({ theme }) => theme.grey};
   border-radius: ${({ theme }) => theme.radius};
   outline: none;
