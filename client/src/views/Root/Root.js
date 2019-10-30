@@ -4,6 +4,8 @@ import Button from 'components/atoms/Button/Button';
 import GlobalStyle from 'theme/GlobalStyle';
 import { theme } from 'theme/mainTheme';
 import Input from 'components/atoms/Input/Input';
+import Select from 'components/atoms/Select/Select';
+import Record from 'components/molecules/Record/Record';
 
 const Root = () => {
   return (
@@ -14,6 +16,8 @@ const Root = () => {
           <Button>Click</Button>
           <Button secondary>Remove</Button>
           <Input placeholder="Cash" />
+          <Select />
+          <Record />
         </>
       </ThemeProvider>
     </div>
