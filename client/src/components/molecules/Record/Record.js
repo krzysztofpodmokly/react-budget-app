@@ -7,7 +7,7 @@ const StyledWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   background: ${({ theme }) => theme.lightGrey1};
-  border-bottom: 1px solid ${({ theme }) => theme.grey};
+  border-bottom: 3px solid ${({ theme }) => theme.lightGrey2};
 `;
 
 const Record = () => (

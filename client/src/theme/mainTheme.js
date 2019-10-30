@@ -6,6 +6,8 @@ export const theme = {
   pastelGrey200: '#C3D8C3',
   lightGrey1: '#F5F5F5',
   lightGrey2: '#EBEBEB',
+  income: '#4976F2',
+  expense: '#F24949',
   black: '#000',
   light: 300,
   bold: 500,
