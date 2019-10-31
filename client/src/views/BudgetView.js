@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Record from 'components/molecules/Record/Record';
 import Heading from 'components/atoms/Heading/Heading';
+import { fetchIncome, fetchExpense } from 'actions';
 
 const StyledTopWrapper = styled.div`
   width: 100%;
@@ -17,11 +19,14 @@ const StyledHeading = styled(Heading)`
 `;
 
 const StyledBox = styled.div`
-  padding: 17px 30px;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  width: 20rem;
   background: ${({ theme, expense }) =>
     expense ? theme.expense : theme.income};
   color: #fff;
-  border-radius: ${({ theme }) => theme.radius};
+  border-radius: 3px;
 
   :nth-child(1) {
     margin-right: 5rem;
@@ -41,34 +46,56 @@ const StyledInnerWrapper = styled.div`
   }
 `;
 
-const BudgetView = () => {
+const BudgetView = ({
+  fetchIncome,
+  fetchExpense,
+  income,
+  expense,
+  loading,
+}) => {
+  useEffect(() => {
+    const parallel = async () => {
+      await Promise.all([fetchIncome(), fetchExpense()]);
+      // await fetchIncome();
+      // await fetchExpense();
+    };
+
+    parallel();
+  }, []);
+
+  const generateList = arr =>
+    arr && arr.map(item => <Record key={item._id} data={item} />);
+
   return (
     <>
       <StyledTopWrapper>
         <StyledHeading>Budget Calculations</StyledHeading>
         <StyledFlexWrapper>
-          <StyledBox>Income</StyledBox>
-          <StyledBox expense>Expense</StyledBox>
+          <StyledBox>
+            <div>Income</div>
+            <div>1200 zł</div>
+          </StyledBox>
+          <StyledBox expense>
+            <div>Expense</div>
+            <div>1800 zł</div>
+          </StyledBox>
         </StyledFlexWrapper>
       </StyledTopWrapper>
       <StyledFlexWrapper>
-        <StyledInnerWrapper>
-          <Record />
-          <Record />
-          <Record />
-          <Record />
-        </StyledInnerWrapper>
-        <StyledInnerWrapper>
-          <Record />
-          <Record />
-          <Record />
-          <Record />
-          <Record />
-          <Record />
-        </StyledInnerWrapper>
+        <StyledInnerWrapper>{generateList(income)}</StyledInnerWrapper>
+        <StyledInnerWrapper>{generateList(expense)}</StyledInnerWrapper>
       </StyledFlexWrapper>
     </>
   );
 };
 
-export default BudgetView;
+const mapStateToProps = state => ({
+  income: state.budget.income,
+  expense: state.budget.expense,
+  loading: state.budget.loading,
+});
+
+export default connect(
+  mapStateToProps,
+  { fetchIncome, fetchExpense },
+)(BudgetView);

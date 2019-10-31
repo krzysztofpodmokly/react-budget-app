@@ -1,6 +1,9 @@
 import styled, { css } from 'styled-components';
 
 const Button = styled.button`
+  padding: 17px 30px;
+  color: ${({ theme }) => theme.primaryBrown};
+  text-decoration: none;
   background-color: ${({ theme }) => theme.pastelGrey100};
   width: 22rem;
   height: 4.7rem;
@@ -10,6 +13,7 @@ const Button = styled.button`
   font-weight: 500;
   font-size: 1.6rem;
   text-transform: uppercase;
+  transition: background-color 0.2s ease-out;
 
   ${({ secondary }) =>
     secondary &&
@@ -22,6 +26,7 @@ const Button = styled.button`
 
   :hover {
     cursor: pointer;
+    background-color: ${({ theme }) => theme.pastelGrey200};
   }
 `;
 

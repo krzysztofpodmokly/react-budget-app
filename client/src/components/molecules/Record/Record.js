@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
+import moment from 'moment';
 
 const StyledWrapper = styled.div`
   padding: 0px 30px;
@@ -10,12 +11,12 @@ const StyledWrapper = styled.div`
   border-bottom: 3px solid ${({ theme }) => theme.lightGrey2};
 `;
 
-const Record = () => (
+const Record = ({ data: { category, dueDate, item, cash } }) => (
   <StyledWrapper>
-    <Paragraph>2019-06-23</Paragraph>
-    <Paragraph>Apples</Paragraph>
-    <Paragraph>Food</Paragraph>
-    <Paragraph>3 zł</Paragraph>
+    <Paragraph>{moment(dueDate).format('L')}</Paragraph>
+    <Paragraph>{item}</Paragraph>
+    <Paragraph>{category}</Paragraph>
+    <Paragraph>{cash}</Paragraph>
   </StyledWrapper>
 );
 

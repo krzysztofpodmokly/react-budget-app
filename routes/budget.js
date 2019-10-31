@@ -44,13 +44,26 @@ router.post(
   }
 );
 
-// @route   GET /api/budget
+// @route   GET /api/budget/income
 // @desc    Retrieves all of the records from database
 // @access  Public
-router.get('/', async (req, res) => {
+router.get('/income', async (req, res) => {
   try {
-    const expenses = await Budget.find();
-    res.send(expenses);
+    const income = await Budget.find({ type: 'income' });
+    res.send(income);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   GET /api/budget/expense
+// @desc    Retrieves all of the records from database
+// @access  Public
+router.get('/expense', async (req, res) => {
+  try {
+    const expense = await Budget.find({ type: 'expense' });
+    res.send(expense);
   } catch (error) {
     console.log(error.message);
     res.status(500).send('Server error');
