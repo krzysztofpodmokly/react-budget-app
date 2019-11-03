@@ -22,12 +22,16 @@ const Button = styled.button`
       width: 10.5rem;
       height: 3rem;
       font-size: 1rem;
+
+      :hover {
+        background-color: ${({ theme }) => theme.grey};
+      }
     `}
 
-  :hover {
+  /* :hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.pastelGrey200};
-  }
+  } */
 `;
 
 export default Button;

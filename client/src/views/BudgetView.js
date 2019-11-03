@@ -1,9 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Record from 'components/molecules/Record/Record';
 import Heading from 'components/atoms/Heading/Heading';
-import { fetchIncome, fetchExpense } from 'actions';
+import ButtonIcon from 'components/atoms/ButtonIcon/ButtonIcon';
+import plusIcon from 'assets/svg/plus.svg';
+import AddItemForm from 'components/organisms/AddItemForm/AddItemForm';
+import { combineFetching } from 'actions';
 
 const StyledTopWrapper = styled.div`
   width: 100%;
@@ -46,26 +50,27 @@ const StyledInnerWrapper = styled.div`
   }
 `;
 
-const BudgetView = ({
-  fetchIncome,
-  fetchExpense,
-  income,
-  expense,
-  loading,
-}) => {
-  useEffect(() => {
-    const parallel = async () => {
-      await Promise.all([fetchIncome(), fetchExpense()]);
-      // await fetchIncome();
-      // await fetchExpense();
-    };
+const StyledButtonIcon = styled(ButtonIcon)`
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  background-color: ${({ theme }) => theme.lightGrey1};
+  background-size: 35%;
+  border-radius: 5rem;
+  z-index: 10000;
+`;
 
-    parallel();
-  }, []);
+const BudgetView = ({ income, expense, parallelFetch }) => {
+  useEffect(() => {
+    parallelFetch();
+  }, [parallelFetch]);
+
+  const [isModalVisible, setModalVisibility] = useState(false);
+
+  const handleFormToggle = () => setModalVisibility(!isModalVisible);
 
   const generateList = arr =>
     arr && arr.map(item => <Record key={item._id} data={item} />);
-
   return (
     <>
       <StyledTopWrapper>
@@ -85,6 +90,8 @@ const BudgetView = ({
         <StyledInnerWrapper>{generateList(income)}</StyledInnerWrapper>
         <StyledInnerWrapper>{generateList(expense)}</StyledInnerWrapper>
       </StyledFlexWrapper>
+      <AddItemForm isVisible={isModalVisible} />
+      <StyledButtonIcon icon={plusIcon} onClick={handleFormToggle} />
     </>
   );
 };
@@ -92,10 +99,19 @@ const BudgetView = ({
 const mapStateToProps = state => ({
   income: state.budget.income,
   expense: state.budget.expense,
-  loading: state.budget.loading,
 });
+
+const mapDispatchToProps = dispatch => ({
+  parallelFetch: () => dispatch(combineFetching()),
+});
+
+BudgetView.propTypes = {
+  income: PropTypes.arrayOf(PropTypes.array).isRequired,
+  expense: PropTypes.arrayOf(PropTypes.array).isRequired,
+  parallelFetch: PropTypes.func.isRequired,
+};
 
 export default connect(
   mapStateToProps,
-  { fetchIncome, fetchExpense },
+  mapDispatchToProps,
 )(BudgetView);

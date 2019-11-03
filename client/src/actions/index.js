@@ -1,1 +1,1 @@
-export { fetchIncome, fetchExpense } from 'actions/budget';
+export { combineFetching } from 'actions/database';
