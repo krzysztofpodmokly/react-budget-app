@@ -8,6 +8,11 @@ const initState = {
 
 const reducer = (state = initState, { type, payload }) => {
   switch (type) {
+    case actionTypes.INIT_LOADING:
+      return {
+        ...state,
+        loading: true,
+      };
     case actionTypes.FETCH_INCOME_SUCCESS:
       return {
         ...state,
@@ -19,6 +24,12 @@ const reducer = (state = initState, { type, payload }) => {
         ...state,
         expense: [...state.expense, ...payload],
         loading: false,
+      };
+
+    case actionTypes.ADD_ITEM_SUCCESS:
+      return {
+        ...state,
+        [payload.itemType]: [...state[payload.itemType], payload.formValues],
       };
     default:
       return state;
