@@ -103,6 +103,7 @@ const AddItemForm = ({ isVisible, addItem }) => {
 
 AddItemForm.propTypes = {
   isVisible: PropTypes.bool.isRequired,
+  addItem: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
-import moment from 'moment';
+// import moment from 'moment';
 
 const StyledWrapper = styled.div`
   padding: 0px 30px;
@@ -27,24 +27,20 @@ const StyledParagraph = styled(Paragraph)`
   }
 `;
 
-const Record = ({ data }) => (
-  <StyledWrapper>
-    <StyledParagraph>{data.dueDate}</StyledParagraph>
-    <StyledParagraph>{data.item}</StyledParagraph>
-    <StyledParagraph>{data.category}</StyledParagraph>
-    <StyledParagraph>{data.cash}</StyledParagraph>
-  </StyledWrapper>
-);
-
-Record.propTypes = {
-  data: PropTypes.object.isRequired,
+const Record = ({ data, bold }) => {
+  return (
+    <StyledWrapper bold={bold}>
+      <StyledParagraph>{data.dueDate}</StyledParagraph>
+      <StyledParagraph>{data.item}</StyledParagraph>
+      <StyledParagraph>{data.category}</StyledParagraph>
+      <StyledParagraph>{data.cash}</StyledParagraph>
+    </StyledWrapper>
+  );
 };
 
-// Record.defaultProps = {
-//   category: '',
-//   cash: 0,
-//   item: '',
-//   dueDate: new Date(),
-// };
+Record.propTypes = {
+  data: PropTypes.objectOf(PropTypes.object).isRequired,
+  bold: PropTypes.bool.isRequired,
+};
 
 export default Record;

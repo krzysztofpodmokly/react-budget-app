@@ -10,6 +10,13 @@ import AddItemForm from 'components/organisms/AddItemForm/AddItemForm';
 import Spinner from 'components/atoms/Spinner/Spinner';
 import { combineFetching } from 'actions';
 
+const data = {
+  cash: 'Amount of money',
+  item: 'Item',
+  category: 'Category',
+  dueDate: 'Date',
+};
+
 const StyledTopWrapper = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.lightGrey1};
@@ -43,12 +50,21 @@ const StyledFlexWrapper = styled.div`
   justify-content: center;
 `;
 
-const StyledInnerWrapper = styled.div`
-  width: 50%;
+const StyledColumnWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
 
   :nth-child(1) {
     margin-right: 3rem;
   }
+`;
+
+const StyledInnerWrapper = styled.div`
+  width: 100%;
+
+  /* :nth-child(1) {
+    margin-right: 3rem;
+  } */
 `;
 
 const StyledButtonIcon = styled(ButtonIcon)`
@@ -59,6 +75,10 @@ const StyledButtonIcon = styled(ButtonIcon)`
   background-size: 35%;
   border-radius: 5rem;
   z-index: 10000;
+`;
+
+const StyledTopRow = styled(Record)`
+  background-color: ${({ theme }) => theme.grey};
 `;
 
 const BudgetView = ({ income, expense, loading, parallelFetch }) => {
@@ -73,12 +93,7 @@ const BudgetView = ({ income, expense, loading, parallelFetch }) => {
   const generateList = arr =>
     !loading && arr && arr.map(item => <Record key={item._id} data={item} />);
 
-  const calcBudget = arr =>
-    !loading ? (
-      arr.reduce((acc, curr) => acc + curr.cash, 0)
-    ) : (
-      <Spinner small />
-    );
+  const calcBudget = arr => arr.reduce((acc, curr) => acc + curr.cash, 0);
 
   return (
     <>
@@ -87,17 +102,28 @@ const BudgetView = ({ income, expense, loading, parallelFetch }) => {
         <StyledFlexWrapper>
           <StyledBox>
             <div>Income</div>
-            <div>{calcBudget(income)} zł</div>
+            <div>
+              {income.length ? calcBudget(income) : <Spinner small white />} zł
+            </div>
           </StyledBox>
           <StyledBox expense>
             <div>Expense</div>
-            <div>{calcBudget(expense)} zł</div>
+            <div>
+              {expense.length ? calcBudget(expense) : <Spinner small white />}{' '}
+              zł
+            </div>
           </StyledBox>
         </StyledFlexWrapper>
       </StyledTopWrapper>
       <StyledFlexWrapper>
-        <StyledInnerWrapper>{generateList(income)}</StyledInnerWrapper>
-        <StyledInnerWrapper>{generateList(expense)}</StyledInnerWrapper>
+        <StyledColumnWrapper>
+          <StyledTopRow data={data} bold />
+          <StyledInnerWrapper>{generateList(income)}</StyledInnerWrapper>
+        </StyledColumnWrapper>
+        <StyledColumnWrapper>
+          <StyledTopRow data={data} bold />
+          <StyledInnerWrapper>{generateList(expense)}</StyledInnerWrapper>
+        </StyledColumnWrapper>
       </StyledFlexWrapper>
       <AddItemForm isVisible={isModalVisible} />
       <StyledButtonIcon icon={plusIcon} onClick={handleFormToggle} />
@@ -116,9 +142,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 BudgetView.propTypes = {
-  income: PropTypes.array.isRequired,
-  expense: PropTypes.array.isRequired,
+  income: PropTypes.arrayOf(PropTypes.array).isRequired,
+  expense: PropTypes.arrayOf(PropTypes.array).isRequired,
   parallelFetch: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 export default connect(
