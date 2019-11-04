@@ -29,7 +29,8 @@ const reducer = (state = initState, { type, payload }) => {
     case actionTypes.ADD_ITEM_SUCCESS:
       return {
         ...state,
-        [payload.itemType]: [...state[payload.itemType], payload.formValues],
+        [payload.type]: [...state[payload.type], payload.content],
+        loading: false,
       };
     default:
       return state;

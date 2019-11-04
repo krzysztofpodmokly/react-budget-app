@@ -11,8 +11,12 @@ const ButtonIcon = styled.button`
   background-size: 40%;
   border: none;
 
-  &.active {
+  .active {
     background-color: white;
+  }
+
+  :hover {
+    cursor: pointer;
   }
 `;
 

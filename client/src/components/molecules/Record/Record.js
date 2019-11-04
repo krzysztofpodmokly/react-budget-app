@@ -27,21 +27,17 @@ const StyledParagraph = styled(Paragraph)`
   }
 `;
 
-const Record = ({ data: { category, dueDate, item, cash } }) => (
+const Record = ({ data }) => (
   <StyledWrapper>
-    <StyledParagraph>{moment(dueDate).format('L')}</StyledParagraph>
-    <StyledParagraph>{item}</StyledParagraph>
-    <StyledParagraph>{category}</StyledParagraph>
-    <StyledParagraph>{cash}</StyledParagraph>
+    <StyledParagraph>{data.dueDate}</StyledParagraph>
+    <StyledParagraph>{data.item}</StyledParagraph>
+    <StyledParagraph>{data.category}</StyledParagraph>
+    <StyledParagraph>{data.cash}</StyledParagraph>
   </StyledWrapper>
 );
 
 Record.propTypes = {
-  data: PropTypes.objectOf(PropTypes.object).isRequired,
-  category: PropTypes.string.isRequired,
-  cash: PropTypes.number.isRequired,
-  item: PropTypes.string.isRequired,
-  dueDate: PropTypes.instanceOf(Date).isRequired,
+  data: PropTypes.object.isRequired,
 };
 
 // Record.defaultProps = {
