@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+// const ObjectId = mongoose.Schema.Types.ObjectId;
 const Schema = mongoose.Schema;
 
 const BudgetSchema = new Schema({
@@ -19,7 +20,7 @@ const BudgetSchema = new Schema({
     required: true
   },
   dueDate: {
-    type: Date,
+    type: String,
     required: true
   }
 });

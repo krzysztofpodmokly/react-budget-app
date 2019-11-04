@@ -7,6 +7,7 @@ import Heading from 'components/atoms/Heading/Heading';
 import ButtonIcon from 'components/atoms/ButtonIcon/ButtonIcon';
 import plusIcon from 'assets/svg/plus.svg';
 import AddItemForm from 'components/organisms/AddItemForm/AddItemForm';
+import Spinner from 'components/atoms/Spinner/Spinner';
 import { combineFetching } from 'actions';
 
 const StyledTopWrapper = styled.div`
@@ -60,7 +61,7 @@ const StyledButtonIcon = styled(ButtonIcon)`
   z-index: 10000;
 `;
 
-const BudgetView = ({ income, expense, parallelFetch }) => {
+const BudgetView = ({ income, expense, loading, parallelFetch }) => {
   useEffect(() => {
     parallelFetch();
   }, [parallelFetch]);
@@ -70,7 +71,15 @@ const BudgetView = ({ income, expense, parallelFetch }) => {
   const handleFormToggle = () => setModalVisibility(!isModalVisible);
 
   const generateList = arr =>
-    arr && arr.map(item => <Record key={item._id} data={item} />);
+    !loading && arr && arr.map(item => <Record key={item._id} data={item} />);
+
+  const calcBudget = arr =>
+    !loading ? (
+      arr.reduce((acc, curr) => acc + curr.cash, 0)
+    ) : (
+      <Spinner small />
+    );
+
   return (
     <>
       <StyledTopWrapper>
@@ -78,11 +87,11 @@ const BudgetView = ({ income, expense, parallelFetch }) => {
         <StyledFlexWrapper>
           <StyledBox>
             <div>Income</div>
-            <div>1200 zł</div>
+            <div>{calcBudget(income)} zł</div>
           </StyledBox>
           <StyledBox expense>
             <div>Expense</div>
-            <div>1800 zł</div>
+            <div>{calcBudget(expense)} zł</div>
           </StyledBox>
         </StyledFlexWrapper>
       </StyledTopWrapper>
@@ -99,6 +108,7 @@ const BudgetView = ({ income, expense, parallelFetch }) => {
 const mapStateToProps = state => ({
   income: state.budget.income,
   expense: state.budget.expense,
+  loading: state.budget.loading,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -106,8 +116,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 BudgetView.propTypes = {
-  income: PropTypes.arrayOf(PropTypes.array).isRequired,
-  expense: PropTypes.arrayOf(PropTypes.array).isRequired,
+  income: PropTypes.array.isRequired,
+  expense: PropTypes.array.isRequired,
   parallelFetch: PropTypes.func.isRequired,
 };
 

@@ -9,7 +9,6 @@ export const fetchIncome = () => async dispatch => {
   try {
     dispatch(initLoading());
     const response = await axios.get('/api/budget/income');
-    // console.log(response.data);
     dispatch({
       type: actionTypes.FETCH_INCOME_SUCCESS,
       payload: response.data,
@@ -41,15 +40,20 @@ export const combineFetching = () => async dispatch => {
   }
 };
 
-export const addItem = (formValues, itemType) => async dispatch => {
+export const addItem = (formValues, type) => async dispatch => {
   try {
     dispatch(initLoading());
 
-    const response = await axios.post('/api/budget', formValues);
-    // console.log(response);
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const response = await axios.post('/api/budget', formValues, config);
     dispatch({
       type: actionTypes.ADD_ITEM_SUCCESS,
-      payload: { response, itemType }, // itemType is either income or expense
+      payload: { content: response.data, type }, // type is either income or expense
     });
   } catch (error) {
     dispatch({ type: actionTypes.ADD_ITEM_FAIL, payload: error });

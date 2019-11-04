@@ -27,11 +27,6 @@ const Button = styled.button`
         background-color: ${({ theme }) => theme.grey};
       }
     `}
-
-  /* :hover {
-    cursor: pointer;
-    background-color: ${({ theme }) => theme.pastelGrey200};
-  } */
 `;
 
 export default Button;

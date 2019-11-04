@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Button from 'components/atoms/Button/Button';
 import Input from 'components/atoms/Input/Input';
 import Heading from 'components/atoms/Heading/Heading';
-import Select from 'components/atoms/Select/Select';
+import SelectType from 'components/atoms/SelectType/SelectType';
+import SelectCategory from 'components/atoms/SelectCategory/SelectCategory';
 import Backdrop from 'components/organisms/Backdrop/Backdrop';
+
+import { addItem as addItemAction } from 'actions';
 
 const StyledWrapper = styled.div`
   position: fixed;
@@ -13,6 +17,7 @@ const StyledWrapper = styled.div`
   flex-direction: column;
   padding: 10rem 5rem;
   z-index: 9999;
+  width: 65rem;
   right: 0;
   top: 0;
   height: 100vh;
@@ -27,26 +32,72 @@ const StyledWrapper = styled.div`
   }
 `;
 
-const StyledInnerWrapper = styled.div`
-  display: flex;
-`;
+const AddItemForm = ({ isVisible, addItem }) => {
+  const [formValues, setFormValues] = useState({
+    dueDate: '',
+    item: '',
+    cash: null,
+  });
 
-const AddItemForm = ({ isVisible }) => {
+  const [selectType, setSelectType] = useState({
+    type: '',
+  });
+
+  const [selectCategory, setSelectCategory] = useState({
+    category: '',
+  });
+
+  const handleSelectTypeChange = value => setSelectType(value);
+
+  const handleSelectCategoryChange = value => setSelectCategory(value);
+
+  const handleInputChange = e => {
+    setFormValues({
+      ...formValues,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleFormSubmit = e => {
+    e.preventDefault();
+    const updatedForm = {
+      ...formValues,
+      type: selectType,
+      category: selectCategory,
+    };
+
+    addItem(updatedForm, updatedForm.type);
+    // console.log(updatedForm);
+  };
+
   return (
-    <>
+    <form onSubmit={handleFormSubmit}>
       <StyledWrapper isVisible={isVisible}>
         <Heading>Add Item Form</Heading>
-        <Input placeholder="Cash" />
-        <Input type="date" />
-        <Input placeholder="Item" />
-        <StyledInnerWrapper>
-          <Select />
-          <Select />
-        </StyledInnerWrapper>
+        <SelectType getType={handleSelectTypeChange} />
+        <Input
+          placeholder="Item"
+          name="item"
+          value={formValues.item || ''}
+          onChange={handleInputChange}
+        />
+        <Input
+          placeholder="Cash"
+          name="cash"
+          value={formValues.cash || ''}
+          onChange={handleInputChange}
+        />
+        <Input
+          type="date"
+          name="dueDate"
+          value={formValues.dueDate || ''}
+          onChange={handleInputChange}
+        />
+        <SelectCategory getCategory={handleSelectCategoryChange} />
         <Button>Add Item</Button>
       </StyledWrapper>
       {isVisible ? <Backdrop /> : null}
-    </>
+    </form>
   );
 };
 
@@ -54,4 +105,11 @@ AddItemForm.propTypes = {
   isVisible: PropTypes.bool.isRequired,
 };
 
-export default AddItemForm;
+const mapDispatchToProps = dispatch => ({
+  addItem: (formValues, type) => dispatch(addItemAction(formValues, type)),
+});
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(AddItemForm);

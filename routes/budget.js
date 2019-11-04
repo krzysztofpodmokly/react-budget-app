@@ -14,9 +14,7 @@ router.post(
     check('item', 'What did you pay for?').isString(),
     check('category', 'Pick a category').isString(),
     check('type', 'Is it income or expense?').isString(),
-    check('dueDate', 'Here is valid date format [yyyy-mm-dd]').isISO8601(
-      'yyyy-mm-dd'
-    )
+    check('dueDate', 'Date is required').isString()
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -32,7 +30,7 @@ router.post(
       if (item) newExpense.item = item;
       if (category) newExpense.category = category;
       if (type) newExpense.type = type;
-      if (moment(dueDate).isValid()) newExpense.dueDate = dueDate;
+      if (dueDate) newExpense.dueDate = dueDate;
 
       const budgetItem = new Budget(newExpense);
       await budgetItem.save();

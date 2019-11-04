@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import arrowSvg from 'assets/svg/arrow.svg';
+import withSelect from 'hoc/withSelect';
 
 const StyledContainer = styled.div`
   display: inline-block;
   position: relative;
-  width: 20rem;
+  width: 100%;
   text-transform: uppercase;
 `;
 
@@ -46,11 +47,12 @@ const StyledSelectedItem = styled.div``;
 const StyledContent = styled.div`
   display: ${({ showItems }) => (showItems ? 'block' : 'none')};
   position: absolute;
-  top: 55px;
+  top: 65px;
   width: 100%;
   border-radius: ${({ theme }) => theme.radius};
   border: 1px solid ${({ theme }) => theme.grey};
   overflow: hidden;
+  background-color: #fff;
 `;
 
 const StyledItem = styled.div`
@@ -62,6 +64,9 @@ const StyledItem = styled.div`
   color: ${({ theme }) => theme.grey};
   font-family: inherit;
   transition: background 0.2s ease-out;
+  display: block;
+  position: relative;
+  z-index: 1;
 
   :not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.lightGrey2};
@@ -73,17 +78,19 @@ const StyledItem = styled.div`
   }
 `;
 
-const Select = () => {
-  const [selectedItem, setSelectedItem] = useState('Pick a type');
-  const [showItems, setShowItems] = useState(false);
-  const items = [{ type: 'Income', id: 1 }, { type: 'Expense', id: 2 }];
-
-  const toggleDropdown = () => {
-    setShowItems(!showItems);
-  };
+const SelectCategory = ({
+  showItems,
+  toggleDropdown,
+  setShowItems,
+  selectedItem,
+  setSelectedItem,
+  getCategory,
+}) => {
+  const items = ['food', 'cosmetics', 'car', 'fees', 'clothes'];
 
   const selectItem = item => {
-    setSelectedItem(item.type);
+    setSelectedItem(item);
+    getCategory(item);
     setShowItems(false); // hide after you pick a type
   };
 
@@ -95,8 +102,8 @@ const Select = () => {
       </StyledInnerContainer>
       <StyledContent showItems={showItems}>
         {items.map(item => (
-          <StyledItem key={item.id} onClick={() => selectItem(item)}>
-            {item.type}
+          <StyledItem key={item} onClick={() => selectItem(item)}>
+            {item}
           </StyledItem>
         ))}
       </StyledContent>
@@ -104,4 +111,4 @@ const Select = () => {
   );
 };
 
-export default Select;
+export default withSelect(SelectCategory);
