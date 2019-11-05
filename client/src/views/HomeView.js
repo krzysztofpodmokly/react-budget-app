@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Linear, TimelineMax } from 'gsap';
 import styled from 'styled-components';
 import budgetImg from 'assets/budget.png';
 import Heading from 'components/atoms/Heading/Heading';
@@ -64,20 +65,66 @@ const StyledParagraph = styled(Paragraph)`
 `;
 
 const HomeView = () => {
+  const image = useRef(null);
+  const text = useRef([]);
+
+  const wrapper1 = useRef(null);
+  const wrapper2 = useRef(null);
+
+  const tl = useRef();
+
+  useEffect(() => {
+    tl.current = new TimelineMax()
+      .from(wrapper1.current, 0.5, {
+        opacity: 0,
+        x: '2%',
+        ease: Linear.easeIn,
+      })
+
+      .from(
+        image.current,
+        0.5,
+        { opacity: 0, x: '-1%', ease: Linear.easeIn },
+        '-=0.1',
+      )
+      .from(wrapper2.current, 0.5, {
+        opacity: 0,
+        x: '2%',
+        ease: Linear.easeIn,
+      })
+      .staggerFrom(text.current, 1, { x: '5%', opacity: 0 }, 0.2);
+  }, []);
+
   return (
     <StyledWrapper>
-      <StyledBox>
-        <StyledGraphic />
+      <StyledBox ref={wrapper1}>
+        <StyledGraphic ref={image} />
       </StyledBox>
-      <StyledBox>
+      <StyledBox ref={wrapper2}>
         <StyledContent>
-          <Heading>Budget Application</Heading>
-          <StyledParagraph>
+          <Heading
+            ref={el => {
+              text.current[0] = el;
+            }}
+          >
+            Budget Application
+          </Heading>
+          <StyledParagraph
+            ref={el => {
+              text.current[1] = el;
+            }}
+          >
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut,
             officia voluptatum? Beatae sequi ipsa sunt exercitationem
             voluptates.
           </StyledParagraph>
-          <Button as={Link} to="/budget">
+          <Button
+            as={Link}
+            to="/budget"
+            ref={el => {
+              text.current[2] = el;
+            }}
+          >
             Discover →
           </Button>
         </StyledContent>

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Linear, TimelineMax } from 'gsap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -9,13 +10,6 @@ import plusIcon from 'assets/svg/plus.svg';
 import AddItemForm from 'components/organisms/AddItemForm/AddItemForm';
 import Spinner from 'components/atoms/Spinner/Spinner';
 import { combineFetching } from 'actions';
-
-const data = {
-  cash: 'Amount of money',
-  item: 'Item',
-  category: 'Category',
-  dueDate: 'Date',
-};
 
 const StyledTopWrapper = styled.div`
   width: 100%;
@@ -53,6 +47,7 @@ const StyledFlexWrapper = styled.div`
 const StyledColumnWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
 
   :nth-child(1) {
     margin-right: 3rem;
@@ -61,10 +56,7 @@ const StyledColumnWrapper = styled.div`
 
 const StyledInnerWrapper = styled.div`
   width: 100%;
-
-  /* :nth-child(1) {
-    margin-right: 3rem;
-  } */
+  text-align: center;
 `;
 
 const StyledButtonIcon = styled(ButtonIcon)`
@@ -82,8 +74,24 @@ const StyledTopRow = styled(Record)`
 `;
 
 const BudgetView = ({ income, expense, loading, parallelFetch }) => {
+  const header = useRef(null);
+  const incomeBox = useRef(null);
+  const expenseBox = useRef(null);
+  const plusIconBox = useRef(null);
+
+  const tl = useRef();
+
   useEffect(() => {
     parallelFetch();
+
+    tl.current = new TimelineMax()
+      .from(header.current, 0.5, {
+        opacity: 0,
+        y: '-2vw',
+      })
+      .from(incomeBox.current, 0.5, { opacity: 0, x: '-2vw' })
+      .from(expenseBox.current, 0.5, { opacity: 0, x: '2vw' }, '-=0.5')
+      .from(plusIconBox.current, 0.5, { opacity: 0, x: '5vw' });
   }, [parallelFetch]);
 
   const [isModalVisible, setModalVisibility] = useState(false);
@@ -91,22 +99,24 @@ const BudgetView = ({ income, expense, loading, parallelFetch }) => {
   const handleFormToggle = () => setModalVisibility(!isModalVisible);
 
   const generateList = arr =>
-    !loading && arr && arr.map(item => <Record key={item._id} data={item} />);
+    !loading &&
+    arr &&
+    arr.map(item => <Record key={item._id} data={item} hover />);
 
   const calcBudget = arr => arr.reduce((acc, curr) => acc + curr.cash, 0);
 
   return (
     <>
       <StyledTopWrapper>
-        <StyledHeading>Budget Calculations</StyledHeading>
+        <StyledHeading ref={header}>Budget Calculations</StyledHeading>
         <StyledFlexWrapper>
-          <StyledBox>
+          <StyledBox ref={incomeBox}>
             <div>Income</div>
             <div>
               {income.length ? calcBudget(income) : <Spinner small white />} zł
             </div>
           </StyledBox>
-          <StyledBox expense>
+          <StyledBox expense ref={expenseBox}>
             <div>Expense</div>
             <div>
               {expense.length ? calcBudget(expense) : <Spinner small white />}{' '}
@@ -117,16 +127,40 @@ const BudgetView = ({ income, expense, loading, parallelFetch }) => {
       </StyledTopWrapper>
       <StyledFlexWrapper>
         <StyledColumnWrapper>
-          <StyledTopRow data={data} bold />
-          <StyledInnerWrapper>{generateList(income)}</StyledInnerWrapper>
+          <StyledTopRow
+            data={{
+              cash: 'Money',
+              item: 'Item',
+              category: 'Category',
+              dueDate: 'Date',
+            }}
+            bold
+          />
+          <StyledInnerWrapper>
+            {income.length ? generateList(income) : <Spinner />}
+          </StyledInnerWrapper>
         </StyledColumnWrapper>
         <StyledColumnWrapper>
-          <StyledTopRow data={data} bold />
-          <StyledInnerWrapper>{generateList(expense)}</StyledInnerWrapper>
+          <StyledTopRow
+            data={{
+              cash: 'Money',
+              item: 'Item',
+              category: 'Category',
+              dueDate: 'Date',
+            }}
+            bold
+          />
+          <StyledInnerWrapper>
+            {expense.length ? generateList(expense) : <Spinner />}
+          </StyledInnerWrapper>
         </StyledColumnWrapper>
       </StyledFlexWrapper>
       <AddItemForm isVisible={isModalVisible} />
-      <StyledButtonIcon icon={plusIcon} onClick={handleFormToggle} />
+      <StyledButtonIcon
+        ref={plusIconBox}
+        icon={plusIcon}
+        onClick={handleFormToggle}
+      />
     </>
   );
 };
@@ -142,8 +176,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 BudgetView.propTypes = {
-  income: PropTypes.arrayOf(PropTypes.array).isRequired,
-  expense: PropTypes.arrayOf(PropTypes.array).isRequired,
+  income: PropTypes.instanceOf(Array).isRequired,
+  expense: PropTypes.instanceOf(Array).isRequired,
   parallelFetch: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
 };

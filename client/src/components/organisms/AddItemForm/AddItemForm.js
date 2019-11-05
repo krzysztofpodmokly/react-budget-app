@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { Linear, TimelineMax, TweenMax } from 'gsap';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Button from 'components/atoms/Button/Button';
@@ -27,12 +28,25 @@ const StyledWrapper = styled.div`
   transform: translate(${({ isVisible }) => (isVisible ? '0' : '100vw')});
   transition: transform 0.3s ease-out;
 
-  * {
+  /* * {
     margin: 0.5rem 0;
-  }
+  } */
+`;
+
+// Wrapper needed to be able to use staggerFrom method on input element
+// Without it GSAP methods don't work
+const StyledInnerWrapper = styled.div`
+  display: block;
 `;
 
 const AddItemForm = ({ isVisible, addItem }) => {
+  const header = useRef(null);
+  const inputs = useRef([]);
+  const buttonAddItem = useRef(null);
+  const backdropLayer = useRef([]);
+
+  const tl = useRef();
+
   const [formValues, setFormValues] = useState({
     dueDate: '',
     item: '',
@@ -46,6 +60,33 @@ const AddItemForm = ({ isVisible, addItem }) => {
   const [selectCategory, setSelectCategory] = useState({
     category: '',
   });
+
+  isVisible &&
+    (() => {
+      tl.current = new TimelineMax()
+        .from(header.current, 0.5, {
+          opacity: 0,
+          y: '-20%',
+          delay: '0.3',
+        })
+        .staggerFrom(
+          inputs.current,
+          0.2,
+          {
+            opacity: 0,
+          },
+          0.1,
+        )
+        .from(
+          buttonAddItem.current,
+          0.7,
+          {
+            opacity: 0,
+            y: '20%',
+          },
+          '+=0.5',
+        );
+    })();
 
   const handleSelectTypeChange = value => setSelectType(value);
 
@@ -67,34 +108,61 @@ const AddItemForm = ({ isVisible, addItem }) => {
     };
 
     addItem(updatedForm, updatedForm.type);
-    // console.log(updatedForm);
   };
 
   return (
     <form onSubmit={handleFormSubmit}>
       <StyledWrapper isVisible={isVisible}>
-        <Heading>Add Item Form</Heading>
-        <SelectType getType={handleSelectTypeChange} />
+        <Heading ref={header} style={{ marginBottom: '3rem' }}>
+          Add Item Form
+        </Heading>
+        <StyledInnerWrapper
+          ref={el => {
+            inputs.current[0] = el;
+          }}
+        >
+          <SelectType getType={handleSelectTypeChange} />
+        </StyledInnerWrapper>
         <Input
+          ref={el => {
+            inputs.current[1] = el;
+          }}
           placeholder="Item"
           name="item"
           value={formValues.item || ''}
           onChange={handleInputChange}
+          autoComplete="off"
         />
         <Input
+          ref={el => {
+            inputs.current[2] = el;
+          }}
           placeholder="Cash"
           name="cash"
           value={formValues.cash || ''}
           onChange={handleInputChange}
+          autoComplete="off"
         />
         <Input
+          ref={el => {
+            inputs.current[3] = el;
+          }}
           type="date"
           name="dueDate"
           value={formValues.dueDate || ''}
           onChange={handleInputChange}
+          autoComplete="off"
         />
-        <SelectCategory getCategory={handleSelectCategoryChange} />
-        <Button>Add Item</Button>
+        <StyledInnerWrapper
+          ref={el => {
+            inputs.current[4] = el;
+          }}
+        >
+          <SelectCategory getCategory={handleSelectCategoryChange} />
+        </StyledInnerWrapper>
+        <Button ref={buttonAddItem} style={{ marginTop: '3rem' }}>
+          Add Item
+        </Button>
       </StyledWrapper>
       {isVisible ? <Backdrop /> : null}
     </form>
