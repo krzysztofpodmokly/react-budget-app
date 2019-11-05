@@ -11,6 +11,16 @@ const Input = styled.input`
   color: ${({ theme }) => theme.grey};
   font-family: inherit;
   transition: all 0.3s ease-out;
+  height: 6rem;
+  margin: 0.5rem 0;
+
+  :nth-of-type(1) {
+    margin-top: 1rem;
+  }
+
+  :last-of-type {
+    margin-bottom: 1rem;
+  }
 
   ::placeholder {
     text-transform: uppercase;
