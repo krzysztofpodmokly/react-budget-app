@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
+import { TimelineMax } from 'gsap';
 import styled, { css } from 'styled-components';
 import Paragraph from 'components/atoms/Paragraph/Paragraph';
-// import moment from 'moment';
+import ButtonIcon from 'components/atoms/ButtonIcon/ButtonIcon';
 
 const StyledWrapper = styled.div`
   padding: 0px 30px;
@@ -20,7 +21,7 @@ const StyledWrapper = styled.div`
     hover &&
     css`
       :hover {
-        transform: translateY(-5px);
+        transform: translateY(-2px);
         border: 1px solid ${({ theme }) => theme.grey};
       }
     `}
@@ -41,14 +42,37 @@ const StyledParagraph = styled(Paragraph)`
   }
 `;
 
-const Record = ({ data, bold, hover }) => (
-  <StyledWrapper hover={hover}>
-    <StyledParagraph bold={bold}>{data.dueDate}</StyledParagraph>
-    <StyledParagraph bold={bold}>{data.item}</StyledParagraph>
-    <StyledParagraph bold={bold}>{data.category}</StyledParagraph>
-    <StyledParagraph bold={bold}>{data.cash}</StyledParagraph>
-  </StyledWrapper>
-);
+const StyledButtonIcon = styled(ButtonIcon)`
+  width: 3rem;
+  height: 3rem;
+`;
+
+const Record = ({ deleteRecord, data, bold, hover, icon, rotate, display }) => {
+  const item = useRef(null);
+  const tl = useRef();
+
+  const removeItem = () => {
+    tl.current = new TimelineMax()
+      .to(item.current, 0.1, { y: '2vh', opacity: 0.6 })
+      .to(item.current, 0.4, { y: '-10vh', opacity: 0 });
+    deleteRecord();
+  };
+
+  return (
+    <StyledWrapper ref={item} hover={hover}>
+      <StyledParagraph bold={bold}>{data.dueDate}</StyledParagraph>
+      <StyledParagraph bold={bold}>{data.item}</StyledParagraph>
+      <StyledParagraph bold={bold}>{data.category}</StyledParagraph>
+      <StyledParagraph bold={bold}>{data.cash}</StyledParagraph>
+      <StyledButtonIcon
+        icon={icon}
+        rotate={rotate}
+        display={display}
+        onClick={removeItem}
+      />
+    </StyledWrapper>
+  );
+};
 
 Record.propTypes = {
   data: PropTypes.objectOf(
@@ -59,11 +83,7 @@ Record.propTypes = {
       cash: PropTypes.number.isRequired,
     }),
   ),
-  bold: PropTypes.bool.isRequired,
-};
-
-Record.defaultProps = {
-  bold: false,
+  bold: PropTypes.bool,
 };
 
 export default Record;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Linear, TimelineMax } from 'gsap';
+import { TimelineMax } from 'gsap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -9,7 +9,7 @@ import ButtonIcon from 'components/atoms/ButtonIcon/ButtonIcon';
 import plusIcon from 'assets/svg/plus.svg';
 import AddItemForm from 'components/organisms/AddItemForm/AddItemForm';
 import Spinner from 'components/atoms/Spinner/Spinner';
-import { combineFetching } from 'actions';
+import { combineFetching, deleteItem as deleteItemAction } from 'actions';
 
 const StyledTopWrapper = styled.div`
   width: 100%;
@@ -69,11 +69,13 @@ const StyledButtonIcon = styled(ButtonIcon)`
   z-index: 10000;
 `;
 
-const StyledTopRow = styled(Record)`
-  background-color: ${({ theme }) => theme.grey};
-`;
-
-const BudgetView = ({ income, expense, loading, parallelFetch }) => {
+const BudgetView = ({
+  income,
+  expense,
+  loading,
+  parallelFetch,
+  deleteItem,
+}) => {
   const header = useRef(null);
   const incomeBox = useRef(null);
   const expenseBox = useRef(null);
@@ -98,12 +100,35 @@ const BudgetView = ({ income, expense, loading, parallelFetch }) => {
 
   const handleFormToggle = () => setModalVisibility(!isModalVisible);
 
-  const generateList = arr =>
-    !loading &&
-    arr &&
-    arr.map(item => <Record key={item._id} data={item} hover />);
+  const generateList = (arr, type) => {
+    let element;
+    if (arr.length) {
+      element = arr.map(item => (
+        <Record
+          deleteRecord={() => deleteItem(item._id, type)}
+          key={item._id}
+          data={item}
+          hover
+          icon={plusIcon}
+          rotate
+          display
+        />
+      ));
+    } else {
+      if (arr.length) {
+        element = <Spinner />;
+      } else {
+        element = <div>no data</div>;
+      }
+    }
+    return element;
+  };
 
-  const calcBudget = arr => arr.reduce((acc, curr) => acc + curr.cash, 0);
+  const calcBudget = arr => {
+    return arr.length
+      ? `${arr.reduce((acc, curr) => acc + curr.cash, 0)} zł`
+      : '-';
+  };
 
   return (
     <>
@@ -113,7 +138,13 @@ const BudgetView = ({ income, expense, loading, parallelFetch }) => {
           <StyledBox ref={incomeBox}>
             <div>Income</div>
             <div>
-              {income.length ? calcBudget(income) : <Spinner small white />} zł
+              {income.length ? (
+                `${calcBudget(income)} zł`
+              ) : income.length ? (
+                <Spinner small white />
+              ) : (
+                <div>-</div>
+              )}{' '}
             </div>
           </StyledBox>
           <StyledBox expense ref={expenseBox}>
@@ -127,31 +158,13 @@ const BudgetView = ({ income, expense, loading, parallelFetch }) => {
       </StyledTopWrapper>
       <StyledFlexWrapper>
         <StyledColumnWrapper>
-          <StyledTopRow
-            data={{
-              cash: 'Money',
-              item: 'Item',
-              category: 'Category',
-              dueDate: 'Date',
-            }}
-            bold
-          />
           <StyledInnerWrapper>
-            {income.length ? generateList(income) : <Spinner />}
+            {generateList(income, 'income')}
           </StyledInnerWrapper>
         </StyledColumnWrapper>
         <StyledColumnWrapper>
-          <StyledTopRow
-            data={{
-              cash: 'Money',
-              item: 'Item',
-              category: 'Category',
-              dueDate: 'Date',
-            }}
-            bold
-          />
           <StyledInnerWrapper>
-            {expense.length ? generateList(expense) : <Spinner />}
+            {generateList(expense, 'expense')}
           </StyledInnerWrapper>
         </StyledColumnWrapper>
       </StyledFlexWrapper>
@@ -159,6 +172,7 @@ const BudgetView = ({ income, expense, loading, parallelFetch }) => {
       <StyledButtonIcon
         ref={plusIconBox}
         icon={plusIcon}
+        display
         onClick={handleFormToggle}
       />
     </>
@@ -173,6 +187,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   parallelFetch: () => dispatch(combineFetching()),
+  deleteItem: (id, type) => dispatch(deleteItemAction(id, type)),
 });
 
 BudgetView.propTypes = {

@@ -73,6 +73,7 @@ router.get('/expense', async (req, res) => {
 // @access  Public
 router.delete('/delete/:id', async (req, res) => {
   try {
+    console.log(req.params.id);
     const itemToDelete = await Budget.findById(req.params.id);
     if (!itemToDelete) {
       return res.status(404).send({ msg: 'Item not found' });

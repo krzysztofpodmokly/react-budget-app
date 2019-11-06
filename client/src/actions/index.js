@@ -1,1 +1,1 @@
-export { combineFetching, addItem } from 'actions/database';
+export { combineFetching, addItem, deleteItem } from 'actions/database';

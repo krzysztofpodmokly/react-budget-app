@@ -43,7 +43,6 @@ export const combineFetching = () => async dispatch => {
 export const addItem = (formValues, type) => async dispatch => {
   try {
     dispatch(initLoading());
-
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -57,5 +56,18 @@ export const addItem = (formValues, type) => async dispatch => {
     });
   } catch (error) {
     dispatch({ type: actionTypes.ADD_ITEM_FAIL, payload: error });
+  }
+};
+
+export const deleteItem = (id, type) => async dispatch => {
+  try {
+    dispatch(initLoading());
+    await axios.delete(`/api/budget/delete/${id}`);
+    dispatch({
+      type: actionTypes.DELETE_ITEM_SUCCESS,
+      payload: { id, type },
+    });
+  } catch (error) {
+    dispatch({ type: actionTypes.DELETE_ITEM_FAIL, payload: error });
   }
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import arrowSvg from 'assets/svg/arrow.svg';
 import withSelect from 'hoc/withSelect';
