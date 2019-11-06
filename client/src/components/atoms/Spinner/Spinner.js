@@ -73,8 +73,8 @@ const Spinner = ({ small, white }) => {
 };
 
 Spinner.propTypes = {
-  small: PropTypes.bool.isRequired,
-  white: PropTypes.bool.isRequired,
+  small: PropTypes.bool,
+  white: PropTypes.bool,
 };
 
 export default Spinner;

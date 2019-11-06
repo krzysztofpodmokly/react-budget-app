@@ -32,6 +32,14 @@ const reducer = (state = initState, { type, payload }) => {
         [payload.type]: [...state[payload.type], payload.content],
         loading: false,
       };
+    case actionTypes.DELETE_ITEM_SUCCESS:
+      return {
+        ...state,
+        [payload.type]: state[payload.type].filter(
+          item => item._id !== payload.id,
+        ),
+        loading: false,
+      };
     default:
       return state;
   }
