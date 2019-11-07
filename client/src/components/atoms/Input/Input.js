@@ -1,6 +1,9 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import Paragraph from 'components/atoms/Paragraph/Paragraph';
 
-const Input = styled.input`
+const StyledInput = styled.input`
   padding: 1.5rem 2rem;
   font-size: ${({ theme }) => theme.fontSize.s};
   font-weight: ${({ theme }) => theme.light};
@@ -39,5 +42,48 @@ const Input = styled.input`
     box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.3);
   } */
 `;
+
+const Input = ({
+  elementtype,
+  value,
+  invalid,
+  shouldValidate,
+  touched,
+  errorMessage,
+  placeholder,
+  changed,
+}) => {
+  let errorMsg = null;
+  if (invalid && shouldValidate && touched) {
+    errorMsg = <Paragraph>{errorMessage}</Paragraph>;
+  }
+
+  return (
+    <>
+      {errorMsg}
+      <StyledInput
+        type={elementtype}
+        onChange={changed}
+        value={value}
+        placeholder={placeholder}
+      />
+    </>
+  );
+};
+
+Input.propTypes = {
+  elementtype: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  invalid: PropTypes.bool.isRequired,
+  touched: PropTypes.bool.isRequired,
+  errorMessage: PropTypes.string.isRequired,
+  changed: PropTypes.func.isRequired,
+  shouldValidate: PropTypes.instanceOf(Object).isRequired,
+  placeholder: PropTypes.string,
+};
+
+Input.defaultProps = {
+  placeholder: '',
+};
 
 export default Input;
