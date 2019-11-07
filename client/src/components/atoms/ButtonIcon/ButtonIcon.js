@@ -1,7 +1,7 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 const ButtonIcon = styled.button`
-  opacity: ${({ display }) => (display ? '1' : '0')};
+  opacity: ${({ display }) => (display ? 1 : 0)};
   width: 6.7rem;
   height: 6.7rem;
   border-radius: 2rem;
@@ -19,12 +19,6 @@ const ButtonIcon = styled.button`
   :hover {
     cursor: pointer;
   }
-
-  ${({ rotate }) =>
-    rotate &&
-    css`
-      transform: rotate(45deg);
-    `}
 `;
 
 export default ButtonIcon;

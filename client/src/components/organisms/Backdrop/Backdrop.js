@@ -11,8 +11,6 @@ const StyledBackdrop = styled.div`
   left: 0;
 `;
 
-const Backdrop = () => {
-  return <StyledBackdrop />;
-};
+const Backdrop = () => <StyledBackdrop />;
 
 export default Backdrop;

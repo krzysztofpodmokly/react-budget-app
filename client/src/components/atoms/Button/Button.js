@@ -15,6 +15,10 @@ const Button = styled.button`
   text-transform: uppercase;
   transition: background-color 0.2s ease-out;
 
+  :hover {
+    cursor: pointer;
+  }
+
   ${({ secondary }) =>
     secondary &&
     css`

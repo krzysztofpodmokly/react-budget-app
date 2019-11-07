@@ -5,9 +5,13 @@ export const initLoading = () => ({
   type: actionTypes.INIT_LOADING,
 });
 
+export const fetchIncomeStart = () => ({
+  type: actionTypes.FETCH_INCOME_START,
+});
+
 export const fetchIncome = () => async dispatch => {
   try {
-    dispatch(initLoading());
+    dispatch(fetchIncomeStart());
     const response = await axios.get('/api/budget/income');
     dispatch({
       type: actionTypes.FETCH_INCOME_SUCCESS,
@@ -18,11 +22,14 @@ export const fetchIncome = () => async dispatch => {
   }
 };
 
+export const fetchExpenseStart = () => ({
+  type: actionTypes.FETCH_EXPENSE_START,
+});
+
 export const fetchExpense = () => async dispatch => {
   try {
-    dispatch(initLoading());
+    dispatch(fetchExpenseStart());
     const response = await axios.get('/api/budget/expense');
-    // console.log(response.data);
     dispatch({
       type: actionTypes.FETCH_EXPENSE_SUCCESS,
       payload: response.data,

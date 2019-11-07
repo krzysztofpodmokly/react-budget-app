@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { TimelineMax } from 'gsap';
+import { TimelineMax, Back } from 'gsap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -7,8 +7,11 @@ import Record from 'components/molecules/Record/Record';
 import Heading from 'components/atoms/Heading/Heading';
 import ButtonIcon from 'components/atoms/ButtonIcon/ButtonIcon';
 import plusIcon from 'assets/svg/plus.svg';
-import AddItemForm from 'components/organisms/AddItemForm/AddItemForm';
+// import AddItemForm from 'components/organisms/AddItemForm/AddItemForm';
+// import AddItemFormCopy from 'components/organisms/AddItemForm/AddItemFormCopy';
 import Spinner from 'components/atoms/Spinner/Spinner';
+import NoData from 'components/molecules/NoData/NoData';
+import Backdrop from 'components/organisms/Backdrop/Backdrop';
 import { combineFetching, deleteItem as deleteItemAction } from 'actions';
 
 const StyledTopWrapper = styled.div`
@@ -72,7 +75,8 @@ const StyledButtonIcon = styled(ButtonIcon)`
 const BudgetView = ({
   income,
   expense,
-  loading,
+  loadingInc,
+  loadingExp,
   parallelFetch,
   deleteItem,
 }) => {
@@ -82,6 +86,7 @@ const BudgetView = ({
   const plusIconBox = useRef(null);
 
   const tl = useRef();
+  const tl2 = useRef();
 
   useEffect(() => {
     parallelFetch();
@@ -93,41 +98,66 @@ const BudgetView = ({
       })
       .from(incomeBox.current, 0.5, { opacity: 0, x: '-2vw' })
       .from(expenseBox.current, 0.5, { opacity: 0, x: '2vw' }, '-=0.5')
-      .from(plusIconBox.current, 0.5, { opacity: 0, x: '5vw' });
+      .from(plusIconBox.current, 0.5, {
+        opacity: 0,
+        x: '5vw',
+        rotation: 180,
+      });
   }, [parallelFetch]);
 
   const [isModalVisible, setModalVisibility] = useState(false);
 
-  const handleFormToggle = () => setModalVisibility(!isModalVisible);
+  const handleFormToggle = () => {
+    setModalVisibility(!isModalVisible);
 
-  const generateList = (arr, type) => {
-    let element;
-    if (arr.length) {
-      element = arr.map(item => (
-        <Record
-          deleteRecord={() => deleteItem(item._id, type)}
-          key={item._id}
-          data={item}
-          hover
-          icon={plusIcon}
-          rotate
-          display
-        />
-      ));
-    } else {
-      if (arr.length) {
-        element = <Spinner />;
-      } else {
-        element = <div>no data</div>;
-      }
-    }
-    return element;
+    !isModalVisible
+      ? (tl2.current = new TimelineMax()
+          .to(plusIconBox.current, 1, {
+            css: { backgroundColor: '#7F8985' },
+          })
+          .to(
+            plusIconBox.current,
+            1,
+            { rotation: 135, ease: Back.easeOut },
+            '-=1',
+          ))
+      : (tl2.current = new TimelineMax()
+
+          .to(plusIconBox.current, 1, {
+            css: { backgroundColor: '#F5F5F5' },
+          })
+          .to(
+            plusIconBox.current,
+            1,
+            { rotation: -90, ease: Back.easeOut },
+            '-=1',
+          ));
   };
 
-  const calcBudget = arr => {
-    return arr.length
-      ? `${arr.reduce((acc, curr) => acc + curr.cash, 0)} zł`
-      : '-';
+  const generateList = (arr, type) =>
+    arr.map(item => (
+      <Record
+        deleteRecord={() => deleteItem(item._id, type)}
+        key={item._id}
+        data={item}
+        hover="true"
+        icon={plusIcon}
+        rotate="true"
+        display="true"
+      />
+    ));
+
+  const calcBudget = arr =>
+    arr.length ? `${arr.reduce((acc, curr) => acc + curr.cash, 0)} zł` : '-';
+
+  const renderConditional = (loading, arr, type) => {
+    if (!loading) {
+      if (arr.length) {
+        return generateList(arr, type);
+      }
+      return <NoData />;
+    }
+    return <Spinner />;
   };
 
   return (
@@ -137,42 +167,32 @@ const BudgetView = ({
         <StyledFlexWrapper>
           <StyledBox ref={incomeBox}>
             <div>Income</div>
-            <div>
-              {income.length ? (
-                `${calcBudget(income)} zł`
-              ) : income.length ? (
-                <Spinner small white />
-              ) : (
-                <div>-</div>
-              )}{' '}
-            </div>
+            <div>{calcBudget(income)}</div>
           </StyledBox>
           <StyledBox expense ref={expenseBox}>
             <div>Expense</div>
-            <div>
-              {expense.length ? calcBudget(expense) : <Spinner small white />}{' '}
-              zł
-            </div>
+            <div>{calcBudget(expense)}</div>
           </StyledBox>
         </StyledFlexWrapper>
       </StyledTopWrapper>
       <StyledFlexWrapper>
         <StyledColumnWrapper>
           <StyledInnerWrapper>
-            {generateList(income, 'income')}
+            {renderConditional(loadingInc, income, 'income')}
           </StyledInnerWrapper>
         </StyledColumnWrapper>
         <StyledColumnWrapper>
           <StyledInnerWrapper>
-            {generateList(expense, 'expense')}
+            {renderConditional(loadingExp, expense, 'expense')}
           </StyledInnerWrapper>
         </StyledColumnWrapper>
       </StyledFlexWrapper>
-      <AddItemForm isVisible={isModalVisible} />
+      {/* <AddItemFormCopy isVisible={isModalVisible} /> */}
+      {isModalVisible && <Backdrop />}
       <StyledButtonIcon
         ref={plusIconBox}
         icon={plusIcon}
-        display
+        display="true"
         onClick={handleFormToggle}
       />
     </>
@@ -182,7 +202,8 @@ const BudgetView = ({
 const mapStateToProps = state => ({
   income: state.budget.income,
   expense: state.budget.expense,
-  loading: state.budget.loading,
+  loadingInc: state.budget.loadingInc,
+  loadingExp: state.budget.loadingExp,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -194,7 +215,9 @@ BudgetView.propTypes = {
   income: PropTypes.instanceOf(Array).isRequired,
   expense: PropTypes.instanceOf(Array).isRequired,
   parallelFetch: PropTypes.func.isRequired,
-  loading: PropTypes.bool.isRequired,
+  loadingInc: PropTypes.bool.isRequired,
+  loadingExp: PropTypes.bool.isRequired,
+  deleteItem: PropTypes.func.isRequired,
 };
 
 export default connect(
