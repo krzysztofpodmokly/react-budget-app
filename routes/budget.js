@@ -11,10 +11,14 @@ router.post(
   '/',
   [
     check('cash', 'How much did you spent on that?').isDecimal(),
-    check('item', 'What did you pay for?').isString(),
-    check('category', 'Pick a category').isString(),
+    check('item', 'What did you pay for?').isAlpha(),
+    check('category', 'Pick a category')
+      .isString()
+      .trim(),
     check('type', 'Is it income or expense?').isString(),
-    check('dueDate', 'Date is required').isString()
+    check('dueDate', 'Date is required')
+      .isISO8601()
+      .toDate()
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -30,7 +34,7 @@ router.post(
       if (item) newExpense.item = item;
       if (category) newExpense.category = category;
       if (type) newExpense.type = type;
-      if (dueDate) newExpense.dueDate = dueDate;
+      if (dueDate) newExpense.dueDate = moment(dueDate).format('L');
 
       const budgetItem = new Budget(newExpense);
       await budgetItem.save();

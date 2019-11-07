@@ -7,7 +7,6 @@ import Input from 'components/atoms/Input/Input';
 import Heading from 'components/atoms/Heading/Heading';
 import SelectType from 'components/atoms/SelectType/SelectType';
 import SelectCategory from 'components/atoms/SelectCategory/SelectCategory';
-import Backdrop from 'components/organisms/Backdrop/Backdrop';
 
 import { addItem as addItemAction } from 'actions';
 
@@ -61,7 +60,6 @@ const AddItemForm = ({ isVisible, addItem }) => {
       type: selectType,
       category: selectCategory,
     };
-
     addItem(updatedForm, updatedForm.type);
   };
 
@@ -78,6 +76,7 @@ const AddItemForm = ({ isVisible, addItem }) => {
           autoComplete="off"
         />
         <Input
+          type="number"
           placeholder="Cash"
           name="cash"
           value={formValues.cash || ''}
@@ -94,7 +93,6 @@ const AddItemForm = ({ isVisible, addItem }) => {
         <SelectCategory getCategory={handleSelectCategoryChange} />
         <Button style={{ marginTop: '3rem' }}>Add Item</Button>
       </StyledWrapper>
-      {isVisible ? <Backdrop /> : null}
     </form>
   );
 };

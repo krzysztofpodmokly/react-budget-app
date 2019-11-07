@@ -45,6 +45,7 @@ const StyledParagraph = styled(Paragraph)`
 const StyledButtonIcon = styled(ButtonIcon)`
   width: 3rem;
   height: 3rem;
+  transform: ${({ rotate }) => rotate && 'rotate(45deg)'};
 `;
 
 const Record = ({ deleteRecord, data, bold, hover, icon, rotate, display }) => {
@@ -82,8 +83,20 @@ Record.propTypes = {
       category: PropTypes.string.isRequired,
       cash: PropTypes.number.isRequired,
     }),
-  ),
+  ).isRequired,
+  icon: PropTypes.string.isRequired,
+  deleteRecord: PropTypes.func.isRequired,
   bold: PropTypes.bool,
+  hover: PropTypes.bool,
+  rotate: PropTypes.bool,
+  display: PropTypes.bool,
+};
+
+Record.defaultProps = {
+  bold: false,
+  hover: false,
+  rotate: false,
+  display: false,
 };
 
 export default Record;

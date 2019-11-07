@@ -4,6 +4,8 @@ const initState = {
   income: [],
   expense: [],
   loading: true,
+  loadingInc: true,
+  loadingExp: true,
 };
 
 const reducer = (state = initState, { type, payload }) => {
@@ -13,17 +15,31 @@ const reducer = (state = initState, { type, payload }) => {
         ...state,
         loading: true,
       };
+
+    case actionTypes.FETCH_INCOME_START:
+      return {
+        ...state,
+        loadingInc: true,
+      };
+
     case actionTypes.FETCH_INCOME_SUCCESS:
       return {
         ...state,
         income: [...state.income, ...payload],
-        loading: false,
+        loadingInc: false,
       };
+
+    case actionTypes.FETCH_EXPENSE_START:
+      return {
+        ...state,
+        loadingExp: true,
+      };
+
     case actionTypes.FETCH_EXPENSE_SUCCESS:
       return {
         ...state,
         expense: [...state.expense, ...payload],
-        loading: false,
+        loadingExp: false,
       };
 
     case actionTypes.ADD_ITEM_SUCCESS:
@@ -32,6 +48,7 @@ const reducer = (state = initState, { type, payload }) => {
         [payload.type]: [...state[payload.type], payload.content],
         loading: false,
       };
+
     case actionTypes.DELETE_ITEM_SUCCESS:
       return {
         ...state,
@@ -40,6 +57,7 @@ const reducer = (state = initState, { type, payload }) => {
         ),
         loading: false,
       };
+
     default:
       return state;
   }
