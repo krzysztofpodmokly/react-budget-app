@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 const withSelect = WrappedComponent => {
   return props => {
     const [showItems, setShowItems] = useState(false);
-    const [selectedItem, setSelectedItem] = useState('Pick a type');
+    const [selectedItem, setSelectedItem] = useState('Choose');
 
     const toggleDropdown = () => {
       setShowItems(!showItems);

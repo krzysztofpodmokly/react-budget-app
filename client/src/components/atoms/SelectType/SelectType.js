@@ -42,12 +42,10 @@ const StyledInnerContainer = styled.div`
   }
 `;
 
-const StyledSelectedItem = styled.div``;
-
 const StyledContent = styled.div`
   display: ${({ showItems }) => (showItems ? 'block' : 'none')};
   position: absolute;
-  top: 65px;
+  top: 55px;
   width: 100%;
   border-radius: ${({ theme }) => theme.radius};
   border: 1px solid ${({ theme }) => theme.grey};
@@ -85,6 +83,7 @@ const SelectType = ({
   selectedItem,
   setSelectedItem,
   getType,
+  notSelected,
 }) => {
   const items = ['income', 'expense'];
 
@@ -97,7 +96,7 @@ const SelectType = ({
   return (
     <StyledContainer>
       <StyledInnerContainer onClick={toggleDropdown}>
-        <StyledSelectedItem>{selectedItem}</StyledSelectedItem>
+        <div>{selectedItem}</div>
         <StyledSVG />
       </StyledInnerContainer>
       <StyledContent showItems={showItems}>
