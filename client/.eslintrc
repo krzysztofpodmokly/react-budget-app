@@ -22,7 +22,7 @@
         "react"
     ],
     "rules": {
-        "no-unused-expressions": 0,
+        "no-unused-expressions": 0, // to be removed
         "no-underscore-dangle": 0,
         "react/state-in-constructor": 0,
         "react/jsx-props-no-spreading": "off",

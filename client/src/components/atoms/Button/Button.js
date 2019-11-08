@@ -14,9 +14,15 @@ const Button = styled.button`
   font-size: 1.6rem;
   text-transform: uppercase;
   transition: background-color 0.2s ease-out;
+  outline: none;
 
   :hover {
     cursor: pointer;
+  }
+
+  :disabled {
+    cursor: not-allowed;
+    background-color: ${({ theme }) => theme.lightGrey2};
   }
 
   ${({ secondary }) =>

@@ -7,7 +7,7 @@ import Record from 'components/molecules/Record/Record';
 import Heading from 'components/atoms/Heading/Heading';
 import ButtonIcon from 'components/atoms/ButtonIcon/ButtonIcon';
 import plusIcon from 'assets/svg/plus.svg';
-// import AddItemForm from 'components/organisms/AddItemForm/AddItemForm';
+import AddItemForm from 'components/organisms/AddItemForm/AddItemForm';
 import Spinner from 'components/atoms/Spinner/Spinner';
 import NoData from 'components/molecules/NoData/NoData';
 import Backdrop from 'components/organisms/Backdrop/Backdrop';
@@ -186,7 +186,7 @@ const BudgetView = ({
           </StyledInnerWrapper>
         </StyledColumnWrapper>
       </StyledFlexWrapper>
-      {/* <AddItemForm isVisible={isModalVisible} /> */}
+      <AddItemForm isVisible={isModalVisible} />
       {isModalVisible && <Backdrop />}
       <StyledButtonIcon
         ref={plusIconBox}
