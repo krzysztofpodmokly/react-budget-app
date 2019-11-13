@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 
 const StyledBackdrop = styled.div`
@@ -9,8 +9,11 @@ const StyledBackdrop = styled.div`
   position: fixed;
   top: 0;
   left: 0;
+  opacity: 0;
 `;
 
-const Backdrop = () => <StyledBackdrop />;
+const Backdrop = forwardRef(({ className }, ref) => (
+  <StyledBackdrop className={className} ref={ref} />
+));
 
 export default Backdrop;
