@@ -83,6 +83,7 @@ const BudgetView = ({
   const incomeBox = useRef(null);
   const expenseBox = useRef(null);
   const plusIconBox = useRef(null);
+  const backdrop = useRef(null);
 
   const tl = useRef();
   const tl2 = useRef();
@@ -111,9 +112,16 @@ const BudgetView = ({
 
     !isModalVisible
       ? (tl2.current = new TimelineMax()
-          .to(plusIconBox.current, 1, {
-            css: { backgroundColor: '#7F8985' },
-          })
+          .to(backdrop.current, 0.1, { x: '0vw' })
+          .to(backdrop.current, 0.5, { opacity: 1 })
+          .to(
+            plusIconBox.current,
+            1,
+            {
+              css: { backgroundColor: '#7F8985' },
+            },
+            '-=0.5',
+          )
           .to(
             plusIconBox.current,
             1,
@@ -121,10 +129,16 @@ const BudgetView = ({
             '-=1',
           ))
       : (tl2.current = new TimelineMax()
-
-          .to(plusIconBox.current, 1, {
-            css: { backgroundColor: '#F5F5F5' },
-          })
+          .to(backdrop.current, 0.5, { opacity: 0 })
+          .to(backdrop.current, 0.1, { x: '-100vw' })
+          .to(
+            plusIconBox.current,
+            1,
+            {
+              css: { backgroundColor: '#F5F5F5' },
+            },
+            '-=0.5',
+          )
           .to(
             plusIconBox.current,
             1,
@@ -187,7 +201,7 @@ const BudgetView = ({
         </StyledColumnWrapper>
       </StyledFlexWrapper>
       <AddItemForm isVisible={isModalVisible} />
-      {isModalVisible && <Backdrop />}
+      <Backdrop ref={backdrop} />
       <StyledButtonIcon
         ref={plusIconBox}
         icon={plusIcon}
